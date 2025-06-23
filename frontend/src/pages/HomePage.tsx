@@ -21,25 +21,20 @@ const HomePage: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-      const fetchPosts = async () => {
-        // --- ADD THIS GUARD CLAUSE ---
-        // Only fetch posts if the user is authenticated.
-        if (!isAuthenticated) {
-          setLoading(false);
-          return;
-        }
-        try {
-          setLoading(true);
-          const response = await api.get('/posts/posts');
-          dispatch(setPosts(response.data));
-        } catch (error) {
-          console.error("Failed to fetch posts:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchPosts();
-    }, [dispatch, isAuthenticated]); // <-- Add isAuthenticated as a dependency
+        const fetchPosts = async () => {
+          // REMOVE THE GUARD. We want to revert to the version that tried to fetch immediately.
+          try {
+            setLoading(true);
+            const response = await api.get('/posts/posts');
+            dispatch(setPosts(response.data));
+          } catch (error) {
+            console.error("Failed to fetch posts:", error);
+          } finally {
+            setLoading(false);
+          }
+        };
+        fetchPosts();
+    }, [dispatch]); // Revert dependency array
     
     const handlePostCreated = (newPost: PostType) => {
         dispatch(addPost(newPost));

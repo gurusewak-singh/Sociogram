@@ -2,13 +2,18 @@
 const cors = require('cors');
 
 const corsOptions = {
-  // Allow only your specific frontend origin
   origin: process.env.CLIENT_URL,
-  
-  // Allow credentials (cookies, auth headers) to be sent
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "Origin",
+    "X-Requested-With",
+    "Accept"
+  ],
   credentials: true,
 };
 
-console.log(`[CORS] Middleware configured for origin: ${process.env.CLIENT_URL}`);
+console.log(`[CORS] Reverted. Initializing CORS for client URL: ${process.env.CLIENT_URL}`);
 
 module.exports = cors(corsOptions);

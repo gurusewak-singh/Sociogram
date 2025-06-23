@@ -11,15 +11,16 @@ import { SocketProvider } from './context/SocketContext.tsx';
 import { Toaster } from 'react-hot-toast';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  // --- REMOVED <React.StrictMode> from around this block ---
-  <Provider store={store}>
-    <BrowserRouter>
-      <ThemeProvider>
-        <SocketProvider>
-          <Toaster position="top-center" reverseOrder={false} />
-          <App />
-        </SocketProvider>
-      </ThemeProvider>
-    </BrowserRouter>
-  </Provider>
+  <React.StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <ThemeProvider>
+          <SocketProvider>
+            <Toaster position="top-center" reverseOrder={false} />
+            <App />
+          </SocketProvider>
+        </ThemeProvider>
+      </BrowserRouter>
+    </Provider>
+  </React.StrictMode>,
 );

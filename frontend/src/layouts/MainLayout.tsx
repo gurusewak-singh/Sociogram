@@ -46,12 +46,14 @@ const LeftSidebar = () => {
   );
 };
 
-// --- UPDATE THE RIGHT PANEL ---
+// --- REVERTED RightPanel COMPONENT ---
 const RightPanel = () => {
     const [friends, setFriends] = useState<Author[]>([]);
     
     useEffect(() => {
         const fetchFriends = async () => {
+            // This version does NOT have the isAuthenticated check,
+            // which will cause it to fail on the initial render after login.
             try {
                 const res = await api.get('/friend/friends');
                 setFriends(res.data);
@@ -60,28 +62,29 @@ const RightPanel = () => {
             }
         };
         fetchFriends();
-    }, []);
+    }, []); // The dependency array is empty, so it only runs once on mount.
 
     return (
         <aside className="w-80 flex-shrink-0 bg-white dark:bg-neutral-800 p-4 border-l border-neutral-200 dark:border-neutral-700 hidden lg:block">
             <h3 className="font-semibold text-neutral-800 dark:text-neutral-100 mb-4">Chats</h3>
             <div className="flex flex-col gap-2">
                 {friends.length > 0 ? friends.map(friend => (
-                    <Link to={`/messages/${friend._id}`} key={friend._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-100">
+                    <Link to={`/messages/${friend._id}`} key={friend._id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700">
                          <img
                             src={friend.profilePic || `https://ui-avatars.com/api/?name=${friend.username}`}
                             alt={friend.username}
                             className="w-10 h-10 rounded-full object-cover"
                         />
-                        <span className="font-medium text-neutral-700">{friend.username}</span>
+                        <span className="font-medium text-neutral-700 dark:text-neutral-300">{friend.username}</span>
                     </Link>
                 )) : (
-                    <p className="text-sm text-neutral-500">Add friends to start chatting.</p>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400">Add friends to start chatting.</p>
                 )}
             </div>
         </aside>
     );
 }
+
 
 // --- REFACTORED TOPBAR COMPONENT ---
 const Topbar = () => {
