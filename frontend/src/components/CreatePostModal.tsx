@@ -1,5 +1,6 @@
 // frontend/src/components/CreatePostModal.tsx
-import React, { useState, useRef, ChangeEvent } from 'react';
+import React, { useState, useRef } from 'react';
+import type { ChangeEvent } from 'react';
 import api from '../services/api';
 import { useAppSelector } from '../hooks/reduxHooks';
 import { FaImage, FaTimes } from 'react-icons/fa';

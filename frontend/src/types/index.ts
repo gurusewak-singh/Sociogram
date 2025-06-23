@@ -23,14 +23,15 @@ export interface PostType {
   createdAt: string;
 }
 
-// --- Add friends and friendRequests to User and UserProfile types ---
 export interface User {
   _id: string;
   username: string;
   email: string;
   profilePic?: string;
-  friends: string[]; // Array of user IDs
-  friendRequests: string[]; // Array of user IDs
+  friends?: string[];
+  friendRequests?: string[];
+  // --- FIX: Add needsSetup flag for onboarding flow ---
+  needsSetup?: boolean; 
 }
 
 export interface UserProfile {
@@ -47,10 +48,10 @@ export interface UserProfile {
 
 export interface NotificationType {
   _id: string;
-  sender: Author; // Use our existing Author type
+  sender: Author;
   type: 'like' | 'comment' | 'friend_request';
-  // --- CORRECTED FIELD ---
-  entityId: string; // The ID of the Post or User. It is NOT optional.
+  // --- FIX: Use entityId consistently. Remove optional 'post' field. ---
+  entityId: string; 
   read: boolean;
   createdAt: string;
 }

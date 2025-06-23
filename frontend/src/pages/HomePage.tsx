@@ -2,40 +2,37 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 import MainLayout from '../layouts/MainLayout';
-import Post from '../components/Post'; // Keep this import
+import Post from '../components/Post';
 import CreatePostModal from '../components/CreatePostModal';
 import { FaPlus } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
 import { setPosts, addPost } from '../store/postSlice';
 import type { PostType } from '../types';
-import { motion } from 'framer-motion'; // <-- Import
+import { motion } from 'framer-motion';
 
 const HomePage: React.FC = () => {
     const dispatch = useAppDispatch();
     const { posts } = useAppSelector(state => state.posts);
-    
-    // --- GET AUTHENTICATION STATUS ---
     const { isAuthenticated } = useAppSelector(state => state.auth);
-
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchPosts = async () => {
-          // REMOVE THE GUARD. We want to revert to the version that tried to fetch immediately.
-          try {
-            setLoading(true);
-            const response = await api.get('/posts/posts');
-            dispatch(setPosts(response.data));
-          } catch (error) {
-            console.error("Failed to fetch posts:", error);
-          } finally {
-            setLoading(false);
-          }
+            // REMOVED THE GUARD CLAUSE AS REQUESTED
+            try {
+                setLoading(true);
+                const response = await api.get('/posts/posts');
+                dispatch(setPosts(response.data));
+            } catch (error) {
+                console.error("Failed to fetch posts:", error);
+            } finally {
+                setLoading(false);
+            }
         };
         fetchPosts();
-    }, [dispatch]); // Revert dependency array
-    
+    }, [dispatch]); // REMOVED isAuthenticated FROM DEPENDENCIES AS REQUESTED
+
     const handlePostCreated = (newPost: PostType) => {
         dispatch(addPost(newPost));
     }
@@ -66,7 +63,7 @@ const HomePage: React.FC = () => {
           {/* Main Feed Content */}
           <div className="max-w-2xl mx-auto">
             {loading ? (
-              <p>Loading posts...</p> // Replace with Skeleton Loaders later
+              <p>Loading posts...</p>
             ) : posts.length > 0 ? (
               posts.map(post => <Post key={post._id} post={post} />)
             ) : (

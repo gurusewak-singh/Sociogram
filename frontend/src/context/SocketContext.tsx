@@ -30,23 +30,17 @@ export const useSocket = () => {
     return context;
 };
 
-// A dummy function to satisfy the onClick handler, assuming it's defined elsewhere
-// or will be implemented. In a real scenario, this would likely be a function
-// that makes an API call.
-const handleAcceptRequest = async (userId: string) => {
+const handleAcceptRequestFromToast = async (userId: string) => {
     console.log(`Accepted friend request from ${userId}`);
     // Example: await api.post(`/users/friends/accept/${userId}`);
 };
 
-
 export const SocketProvider = ({ children }: { children: ReactNode }) => {
-    // Reverted from useRef to useState
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
     const { user: currentUser, isAuthenticated } = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
 
-    // Reverted useEffect block
     useEffect(() => {
         if (isAuthenticated && currentUser?._id) {
             const newSocket = io("http://localhost:5000", {
@@ -56,7 +50,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
 
             setSocket(newSocket);
 
-            // --- ATTACH ALL LISTENERS HERE ---
             newSocket.on('connect', () => {
                 console.log(`[Socket Context] ✅ Socket connected! ID: ${newSocket.id}`);
             });
@@ -96,7 +89,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
                       <div className="mt-2 flex gap-2">
                         <button 
                           onClick={() => {
-                            handleAcceptRequest(payload._id);
+                            handleAcceptRequestFromToast(payload._id);
                             toast.dismiss(t.id);
                           }}
                           className="px-3 py-1 text-sm bg-primary-600 text-white rounded-md hover:bg-primary-700"
@@ -130,7 +123,6 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
                 }));
             });
 
-            // Cleanup function
             return () => {
                 newSocket.disconnect();
             };
@@ -140,10 +132,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
                 setSocket(null);
             }
         }
-    // The ONLY dependency should be the user's ID and authentication status
-    }, [isAuthenticated, currentUser?._id, dispatch]); // dispatch is included because it's used inside the hook
+    }, [isAuthenticated, currentUser?._id, dispatch]);
 
-    // Reverted to provide the state variable
     return (
         <SocketContext.Provider value={{ socket, onlineUsers }}>
             {children}

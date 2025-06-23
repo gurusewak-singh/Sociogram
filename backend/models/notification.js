@@ -9,10 +9,12 @@ const notificationSchema = new mongoose.Schema({
     enum: ['like', 'comment', 'friend_request'], 
     required: true 
   },
-  entityId: { // This can be a Post ID or User ID
+  // --- NOTE: This is our source of truth. It can be a Post ID or User ID. ---
+  entityId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
   },
+  // --- NOTE: There is no 'post' field. This is correct. ---
   read: { type: Boolean, default: false },
 }, { timestamps: true });
 

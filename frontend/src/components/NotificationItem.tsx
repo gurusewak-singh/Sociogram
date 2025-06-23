@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import type { NotificationType } from '../types';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import TimeAgo from './TimeAgo'; // We'll create this next
+import TimeAgo from './TimeAgo';
 import { useAppDispatch } from '../hooks/reduxHooks';
 import { markAsRead, removeNotification } from '../store/notificationSlice';
 
@@ -18,11 +18,11 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, close
   const dispatch = useAppDispatch();
 
   const handleAccept = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent dropdown from closing or navigating
+    e.stopPropagation();
     try {
       await api.post(`/friend/friend-request/${notification.sender._id}/accept`);
       toast.success('Friend request accepted!');
-      dispatch(removeNotification(notification._id)); // Remove notification from list
+      dispatch(removeNotification(notification._id));
     } catch (error) {
       toast.error('Failed to accept request.');
     }
@@ -43,11 +43,8 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, close
     switch (notification.type) {
       case 'like':
       case 'comment':
-        // --- CORRECTED LINK ---
-        // Use the entityId for the post link
         return `/post/${notification.entityId}`;
       case 'friend_request':
-        // The sender is the entity for friend requests
         return `/profile/${notification.sender._id}`;
       default:
         return '#';
@@ -64,19 +61,16 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, close
   };
 
   const handleNotificationClick = async () => {
-    // Dispatch the action to update the UI immediately
     if (!notification.read) {
       dispatch(markAsRead(notification._id));
     }
     
-    // Mark as read in the DB (fire and forget)
-    // Only do this for informational notifications, as friend requests are "removed"
     if ((notification.type === 'like' || notification.type === 'comment') && !notification.read) {
         api.put(`/notifications/${notification._id}/read`);
     }
     
-    closeDropdown(); // Close the dropdown menu
-    navigate(getNotificationLink()); // Navigate to the link
+    closeDropdown();
+    navigate(getNotificationLink());
   };
 
   return (
@@ -99,8 +93,18 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification, close
       </div>
       {notification.type === 'friend_request' && !notification.read && (
         <div className="mt-2 flex gap-2 justify-end">
-          <button onClick={handleAccept} className="px-3 py-1 text-xs bg-primary-600 text-white rounded-md">Accept</button>
-          <button onClick={handleDecline} className="px-3 py-1 text-xs bg-neutral-200 rounded-md">Decline</button>
+          <button 
+            onClick={handleAccept} 
+            className="px-3 py-1 text-xs bg-primary-600 text-white rounded-md hover:bg-primary-700"
+          >
+            Accept
+          </button>
+          <button 
+            onClick={handleDecline} 
+            className="px-3 py-1 text-xs bg-neutral-200 rounded-md hover:bg-neutral-300"
+          >
+            Decline
+          </button>
         </div>
       )}
     </div>
