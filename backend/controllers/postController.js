@@ -75,6 +75,12 @@ exports.getPostsByUserId = async (req, res) => {
 exports.getLikedPosts = async (req, res) => {
   try {
     const userId = req.params.userId;
+
+    // Security Check: Only allow users to see their own liked posts
+    if (req.user.id !== userId) {
+      return res.status(403).json({ message: "You are not authorized to view these posts." });
+    }
+
     // Find all posts where the 'likes' array contains the userId
     const posts = await Post.find({ likes: userId })
       .populate('userId', 'username profilePic')
@@ -87,6 +93,7 @@ exports.getLikedPosts = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 exports.deletePost = async (req, res) => {
   try {
