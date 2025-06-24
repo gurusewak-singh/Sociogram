@@ -6,7 +6,6 @@ import { useAppDispatch } from '../hooks/reduxHooks';
 import { setCredentials } from '../store/authSlice';
 
 const handleGoogleLogin = () => {
-  // Same function as in LoginPage
   window.location.href = 'http://localhost:5000/api/auth/google';
 };
 
@@ -19,7 +18,7 @@ const RegisterPage = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useAppDispatch(); // Get dispatch hook
+  const dispatch = useAppDispatch();
 
   const { username, email, password } = formData;
 
@@ -31,7 +30,6 @@ const RegisterPage = () => {
     e.preventDefault();
     setError(null);
 
-    // Basic client-side validation
     if (password.length < 8) {
       setError('Password must be at least 8 characters long.');
       return;
@@ -43,27 +41,26 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
-      // The backend now returns a token and user object
       const response = await api.post('/auth/register', {
         username,
         email,
         password,
       });
 
-      // --- NEW LOGIC ---
-      // Log the user in by setting credentials in Redux
+      // --- KEY CHANGE ---
+      // 1. Log the user in by saving their credentials to Redux
       dispatch(setCredentials(response.data));
-      // Navigate to home page. The App component will handle showing the modal.
+      
+      // 2. Navigate to the home page. The App component will see the 
+      //    'needsSetup' flag and show the onboarding modal.
       navigate('/');
+      
     } catch (err: any) {
-      // The 'any' type is used here for simplicity to access err.response.data
-      // In a more robust app, you would define a specific error type
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError('An unexpected error occurred. Please try again.');
       }
-      console.error('Registration failed:', err);
     } finally {
       setLoading(false);
     }

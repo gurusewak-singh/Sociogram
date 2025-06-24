@@ -21,16 +21,18 @@ exports.register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      needsSetup: true,
+      needsSetup: true, // Mark this user for the onboarding flow
     });
     
     await newUser.save();
 
+    // Log the user in immediately
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     
     const userObject = newUser.toObject();
     delete userObject.password;
 
+    // Send back token and user object
     res.status(201).json({ token, user: userObject });
 
   } catch (err) {
@@ -38,6 +40,7 @@ exports.register = async (req, res) => {
   }
 };
 
+// ... login, forgotPassword, resetPassword functions remain exactly the same ...
 exports.login = async (req, res) => {
   try {
     const { emailOrUsername = "", password } = req.body;

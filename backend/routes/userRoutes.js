@@ -7,6 +7,7 @@ const { verifyToken } = require('../middlewares/authMiddleware');
 router.get('/search', verifyToken, userController.searchUsers);
 router.get('/profile/:id', verifyToken, userController.getUserProfile);
 router.put('/edit', verifyToken, userController.editProfile);
-router.get('/check-username', userController.checkUsername); // No token needed for this
+router.get('/check-username', verifyToken, userController.checkUsername);
+
 
 module.exports = router;

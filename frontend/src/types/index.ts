@@ -30,7 +30,7 @@ export interface User {
   profilePic?: string;
   friends?: string[];
   friendRequests?: string[];
-  // --- FIX: Add needsSetup flag for onboarding flow ---
+  // --- THIS IS THE CRITICAL LINE THAT NEEDS TO BE ADDED/UNCOMMENTED ---
   needsSetup?: boolean; 
 }
 

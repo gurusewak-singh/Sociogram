@@ -82,7 +82,12 @@ exports.checkUsername = async (req, res) => {
     if (!username) {
       return res.status(400).json({ available: false, message: 'Username is required.' });
     }
-    const user = await User.findOne({ username: username.toLowerCase() });
+    // Check against current user to allow them to keep their own name
+    const user = await User.findOne({ 
+      username: { $regex: `^${username}$`, $options: 'i' }, // case-insensitive exact match
+      _id: { $ne: req.user?.id } // Exclude the current user if they are logged in
+    });
+
     if (user) {
       return res.status(200).json({ available: false, message: 'Username is already taken.' });
     }

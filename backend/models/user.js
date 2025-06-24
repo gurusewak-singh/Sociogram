@@ -33,7 +33,10 @@ const userSchema = new mongoose.Schema({
   googleId:{ // <-- ADD THIS FIELD
     type: String, 
   },
-  
+   needsSetup: {
+    type: Boolean,
+    default: false // Default to false for existing users
+  },
   friends: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
   friendRequests: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 }, {timestamps: true});
