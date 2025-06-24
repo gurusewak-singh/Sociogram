@@ -72,6 +72,22 @@ exports.getPostsByUserId = async (req, res) => {
   }
 };
 
+exports.getLikedPosts = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    // Find all posts where the 'likes' array contains the userId
+    const posts = await Post.find({ likes: userId })
+      .populate('userId', 'username profilePic')
+      .populate('comments.userId', 'username profilePic')
+      .sort({ createdAt: -1 });
+      
+    res.status(200).json(posts);
+  } catch (err) {
+    console.error("Error in getLikedPosts:", err);
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.deletePost = async (req, res) => {
   try {
     const postId = req.params.id;
@@ -124,12 +140,11 @@ exports.toggleLikePost = async (req, res) => {
         const senderUser = await User.findById(req.user.id).select('username');
         const senderUsername = senderUser ? senderUser.username : 'Someone';
         
-        // --- FIX: Save to entityId, not 'post' ---
         await new Notification({
           recipient: postToUpdate.userId,
           sender: req.user.id,
           type: 'like',
-          entityId: postToUpdate._id, // Use entityId to store the Post's ID
+          entityId: postToUpdate._id,
         }).save();
         
         const postOwnerSocket = getSocketId(postOwnerIdString);
@@ -155,7 +170,6 @@ exports.toggleLikePost = async (req, res) => {
 exports.addComment = async (req, res) => {
   const io = req.app.get('socketio');
   try {
-    // ... (validation logic is fine)
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
@@ -168,12 +182,11 @@ exports.addComment = async (req, res) => {
       const commenter = await User.findById(req.user.id).select('username');
       const commenterUsername = commenter ? commenter.username : 'Someone';
 
-      // --- FIX: Save to entityId, not 'post' ---
       await new Notification({
         recipient: post.userId,
         sender: req.user.id,
         type: 'comment',
-        entityId: post._id, // Use entityId to store the Post's ID
+        entityId: post._id,
       }).save();
 
       const postOwnerSocket = getSocketId(post.userId.toString());

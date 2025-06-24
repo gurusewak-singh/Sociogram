@@ -1,5 +1,4 @@
 // frontend/src/pages/LoginPage.tsx
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../hooks/reduxHooks';
@@ -11,20 +10,15 @@ const handleGoogleLogin = () => {
 };
 
 const LoginPage = () => {
-  // State for the email/password form
   const [formData, setFormData] = useState({
     emailOrUsername: '',
     password: '',
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  
-  // Hooks for navigation and Redux
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const location = useLocation();
-  
-  // State for the success message from registration
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,11 +52,8 @@ const LoginPage = () => {
         password,
       });
 
-      // On successful login, dispatch credentials to Redux store
       const { token, user } = response.data;
       dispatch(setCredentials({ token, user }));
-
-      // Navigate to the home page
       navigate('/');
 
     } catch (err: any) {
@@ -94,7 +85,6 @@ const LoginPage = () => {
         </div>
       )}
       
-      {/* --- START OF THE NEW FORM --- */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label 
@@ -129,6 +119,11 @@ const LoginPage = () => {
             required
             className="mt-1 block w-full px-3 py-2 bg-white border border-neutral-300 rounded-md shadow-sm placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
           />
+          <div className="text-right text-sm mt-1">
+            <Link to="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
+              Forgot Password?
+            </Link>
+          </div>
         </div>
         <div>
           <button
@@ -140,7 +135,6 @@ const LoginPage = () => {
           </button>
         </div>
       </form>
-      {/* --- END OF THE NEW FORM --- */}
 
       <div className="flex items-center my-6">
         <hr className="flex-grow border-t border-neutral-300" />

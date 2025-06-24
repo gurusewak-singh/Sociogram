@@ -1,0 +1,94 @@
+// frontend/src/pages/account/EditProfileSubPage.tsx
+import React, { useState, useRef } from 'react';
+import type { ChangeEvent } from 'react';
+import api from '../../services/api';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import { setCredentials } from '../../store/authSlice';
+import { FaCamera } from 'react-icons/fa';
+import toast from 'react-hot-toast';
+
+const EditProfileSubPage = () => {
+    const { user, token } = useAppSelector(state => state.auth);
+    const dispatch = useAppDispatch();
+
+    const [formData, setFormData] = useState({
+        username: user?.username || '',
+        bio: user?.bio || '',
+    });
+    const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(user?.profilePic || null);
+    const [loading, setLoading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setProfilePicFile(file);
+            setPreviewImage(URL.createObjectURL(file));
+        }
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        const toastId = toast.loading('Saving profile...');
+
+        try {
+            let profilePicUrl = user?.profilePic || '';
+            if (profilePicFile) {
+                const uploadFormData = new FormData();
+                uploadFormData.append('image', profilePicFile);
+                const uploadResponse = await api.post('/upload', uploadFormData);
+                profilePicUrl = uploadResponse.data.imageUrl;
+            }
+
+            const updateData = { ...formData, profilePic: profilePicUrl };
+            const response = await api.put('/users/edit', updateData);
+            
+            dispatch(setCredentials({ user: response.data.user, token: token! }));
+            toast.success('Profile updated successfully!', { id: toastId });
+        } catch (err: any) {
+            toast.error(err.response?.data?.message || 'Failed to update profile.', { id: toastId });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!user) {
+        return <div>Loading user data...</div>;
+    }
+
+    return (
+        <div>
+            <h2 className="text-2xl font-bold dark:text-white mb-6">Edit Profile</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="flex items-center gap-6">
+                    <img src={previewImage || `...`} alt="Preview" className="w-24 h-24 rounded-full object-cover"/>
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="px-4 py-2 text-sm border border-neutral-300 dark:border-neutral-600 rounded-lg">
+                        Change Photo
+                    </button>
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*"/>
+                </div>
+                <div>
+                    <label htmlFor="username" className="block text-sm font-medium dark:text-neutral-300">Username</label>
+                    <input type="text" name="username" value={formData.username} onChange={handleChange} className="mt-1 w-full p-2 border border-neutral-300 dark:bg-neutral-700 dark:border-neutral-600 rounded-md" />
+                </div>
+                <div>
+                    <label htmlFor="bio" className="block text-sm font-medium dark:text-neutral-300">Bio</label>
+                    <textarea name="bio" value={formData.bio} onChange={handleChange} rows={4} className="mt-1 w-full p-2 border border-neutral-300 dark:bg-neutral-700 dark:border-neutral-600 rounded-md"></textarea>
+                </div>
+                <div className="flex justify-end">
+                    <button type="submit" disabled={loading} className="px-6 py-2 bg-primary-600 text-white rounded-lg disabled:bg-primary-300">
+                        {loading ? 'Saving...' : 'Save Changes'}
+                    </button>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+export default EditProfileSubPage;

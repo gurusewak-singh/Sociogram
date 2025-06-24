@@ -12,6 +12,8 @@ router.get('/:id', postController.getPostById); // Get a post by ID
 
 router.get('/user/:userId', verifyToken, postController.getPostsByUserId);
 
+router.get('/liked/:userId', verifyToken, postController.getLikedPosts);
+
 router.delete('/:id', verifyToken, postController.deletePost); // Delete a post by ID
 
 router.put('/:id/like', verifyToken, postController.toggleLikePost); // Like a post

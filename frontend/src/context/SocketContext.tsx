@@ -1,5 +1,6 @@
 // frontend/src/context/SocketContext.tsx
-import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import type { ReactNode } from 'react';
 import io, { Socket } from 'socket.io-client';
 import { useAppSelector, useAppDispatch } from '../hooks/reduxHooks';
 import { addFriend } from '../store/authSlice';

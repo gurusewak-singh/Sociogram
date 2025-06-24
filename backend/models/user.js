@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: 8
   },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   profilePic:{
     type: String,
     default: ""
@@ -31,6 +33,7 @@ const userSchema = new mongoose.Schema({
   googleId:{ // <-- ADD THIS FIELD
     type: String, 
   },
+  
   friends: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
   friendRequests: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 }, {timestamps: true});

@@ -10,6 +10,8 @@ import AuthCallbackPage from './pages/AuthCallbackPage';
 import HomePage from './pages/HomePage';
 import MessagesPage from './pages/MessagesPage';
 import MessagesHubPage from './pages/MessagesHubPage'; // <-- Import
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import ExplorePage from './pages/ExplorePage';
 import SettingsPage from './pages/SettingsPage'; // <-- Import
 import NotificationsPage from './pages/NotificationsPage'; // <-- Import
@@ -33,6 +35,8 @@ function App() {
         <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
         <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
