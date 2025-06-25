@@ -37,6 +37,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false // Default to false for existing users
   },
+    usernameLastChanged: {
+    type: Date,
+  },
   friends: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
   friendRequests: [{type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
 }, {timestamps: true});

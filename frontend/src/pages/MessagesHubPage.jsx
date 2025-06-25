@@ -1,3 +1,4 @@
+//frontend/src/pages/MessagesHubPage.jsx
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import { Link } from 'react-router-dom';

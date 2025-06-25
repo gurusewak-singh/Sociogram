@@ -1,3 +1,4 @@
+//frontend/src/pages/FriendRequestsPage.jsx
 import React, { useState, useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import api from '../services/api';

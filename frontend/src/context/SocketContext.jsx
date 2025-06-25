@@ -1,3 +1,4 @@
+//frontend/src/context/SocketContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import io from 'socket.io-client';
 import { useAppSelector, useAppDispatch } from '../hooks/reduxHooks';

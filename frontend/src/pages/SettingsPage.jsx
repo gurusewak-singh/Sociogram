@@ -1,3 +1,4 @@
+//frontend/src/pages/SettingsPage.jsx
 import React from 'react';
 import MainLayout from '../layouts/MainLayout';
 import { useTheme } from '../context/ThemeContext';

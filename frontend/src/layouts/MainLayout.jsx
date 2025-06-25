@@ -1,3 +1,4 @@
+//frontend/src/layouts/MainLayout.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom'; 
 import useDebounce from '../hooks/useDebounce';

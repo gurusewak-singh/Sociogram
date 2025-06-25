@@ -22,10 +22,12 @@ exports.searchUsers = async (req, res) => {
   }
 };
 
-// Get a specific user's public profile
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id)
+        .select("-password")
+        .populate('friends', 'username profilePic');
+
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.status(200).json(user);
@@ -34,42 +36,54 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
-// backend/controllers/userController.js
 exports.editProfile = async (req, res) => {
   try {
-    const { username, email, bio, profilePic } = req.body;
-    const updateFields = {};
+    const { username, bio, profilePic } = req.body;
+    const userId = req.user.id;
 
-    // Only add fields to updateFields if they are provided in the request
-    if (username !== undefined) updateFields.username = username;
-    if (email !== undefined) updateFields.email = email;
-    if (bio !== undefined) updateFields.bio = bio; // Allows setting bio to "" (empty string)
-    if (profilePic !== undefined) updateFields.profilePic = profilePic; // Allows setting profilePic to ""
-
-    if (Object.keys(updateFields).length === 0) {
-        return res.status(400).json({ message: "No fields to update provided." });
+    // Fetch the user to access their current data
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { $set: updateFields },
-      { new: true, runValidators: true } // runValidators is good for schema validation
-    ).select("-password");
+    // --- COOLDOWN LOGIC ---
+    // Check if the username is being changed
+    if (username && user.username !== username) {
+      // Check if a cooldown is active
+      if (user.usernameLastChanged) {
+        const cooldownPeriod = 14 * 24 * 60 * 60 * 1000; // 14 days in milliseconds
+        const timeSinceLastChange = Date.now() - user.usernameLastChanged.getTime();
 
-    if (!updatedUser) {
-        return res.status(404).json({ message: "User not found during update." });
+        if (timeSinceLastChange < cooldownPeriod) {
+          const nextChangeDate = new Date(user.usernameLastChanged.getTime() + cooldownPeriod);
+          return res.status(403).json({ 
+            message: `You can change your username again on ${nextChangeDate.toLocaleDateString()}.` 
+          });
+        }
+      }
+      // If change is allowed, update username and set the new timestamp
+      user.username = username;
+      user.usernameLastChanged = new Date();
     }
 
-    // IMPORTANT: If you store the user object in the JWT token or localStorage on the frontend,
-    // that stored object is now stale. The frontend will need to update its stored user.
-    // The response here sends the updatedUser, which the frontend should use.
+    // Update other fields
+    if (bio !== undefined) user.bio = bio;
+    if (profilePic !== undefined) user.profilePic = profilePic;
 
-    res.status(200).json({ message: "Profile updated successfully", user: updatedUser });
+    // Save all changes at once
+    const updatedUser = await user.save();
+
+    // Prepare response object
+    const userObject = updatedUser.toObject();
+    delete userObject.password;
+
+    res.status(200).json({ message: "Profile updated successfully", user: userObject });
+
   } catch (err) {
     console.error("Error in editProfile:", err);
-    // Handle specific validation errors if needed
-    if (err.name === 'ValidationError') {
-        return res.status(400).json({ message: err.message });
+    if (err.code === 11000) { // Handle duplicate username error
+        return res.status(400).json({ message: "That username is already taken." });
     }
     res.status(500).json({ message: "Failed to update profile: " + err.message });
   }

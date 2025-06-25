@@ -214,3 +214,21 @@ exports.cancelFriendRequest = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 };
+
+exports.removeFriend = async (req, res) => {
+    try {
+        const userId = req.user.id; // The user initiating the removal
+        const friendIdToRemove = req.params.id; // The user to be removed
+
+        // Use $pull to remove the friend's ID from the user's friends list
+        // and vice-versa. This is an atomic operation in MongoDB.
+        await User.findByIdAndUpdate(userId, { $pull: { friends: friendIdToRemove } });
+        await User.findByIdAndUpdate(friendIdToRemove, { $pull: { friends: userId } });
+
+        res.status(200).json({ message: "Friend removed successfully." });
+
+    } catch (error) {
+        console.error("Error removing friend:", error);
+        res.status(500).json({ message: "Server error while removing friend." });
+    }
+};

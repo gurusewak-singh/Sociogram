@@ -1,10 +1,12 @@
+//frontend/src/components/EditProfileModal.jsx
 import React, { useState, useRef } from 'react';
 import api from '../services/api';
 import { useAppDispatch } from '../hooks/reduxHooks';
 import { setCredentials } from '../store/authSlice';
 import { FaCamera } from 'react-icons/fa';
+import toast from 'react-hot-toast'; // <-- IMPORT TOAST
 
-const EditProfileModal = ({ user, onClose }) => {
+const EditProfileModal = ({ user, onClose, onProfileUpdate }) => {
   const [formData, setFormData] = useState({
     username: user.username,
     bio: user.bio,
@@ -12,7 +14,7 @@ const EditProfileModal = ({ user, onClose }) => {
   const [profilePicFile, setProfilePicFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(user.profilePic);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(''); // We can keep this for inline errors if needed
   const fileInputRef = useRef(null);
   const dispatch = useAppDispatch();
 
@@ -33,10 +35,12 @@ const EditProfileModal = ({ user, onClose }) => {
     setLoading(true);
     setError('');
 
+    // --- START: TOAST IMPLEMENTATION ---
+    const toastId = toast.loading('Saving profile...'); // Show loading toast
+
     try {
       let profilePicUrl = user.profilePic;
 
-      // 1. If a new file is selected, upload it
       if (profilePicFile) {
         const uploadFormData = new FormData();
         uploadFormData.append('image', profilePicFile);
@@ -47,7 +51,6 @@ const EditProfileModal = ({ user, onClose }) => {
         profilePicUrl = uploadResponse.data.imageUrl;
       }
 
-      // 2. Submit all data to the edit profile endpoint
       const updateData = {
         ...formData,
         profilePic: profilePicUrl,
@@ -55,25 +58,32 @@ const EditProfileModal = ({ user, onClose }) => {
 
       const response = await api.put('/users/edit', updateData);
       
-      // 3. Update Redux store with the new user data
       dispatch(setCredentials({ user: response.data.user, token: localStorage.getItem('token') }));
+      onProfileUpdate(response.data.user);
       
-      onClose(); // Close the modal on success
+      toast.success('Profile updated successfully!', { id: toastId }); // Update to success
+      
+      onClose();
+
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update profile.');
+      const errorMessage = err.response?.data?.message || 'Failed to update profile.';
+      setError(errorMessage); // Set inline error
+      toast.error(errorMessage, { id: toastId }); // Update to error
     } finally {
       setLoading(false);
     }
+    // --- END: TOAST IMPLEMENTATION ---
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg shadow-xl p-6 w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
         
         <form onSubmit={handleSubmit}>
-          <div className="flex justify-center mb-4">
+          {/* ... (The form JSX remains the same) ... */}
+           <div className="flex justify-center mb-4">
             <div className="relative">
               <img
                 src={previewImage || `https://ui-avatars.com/api/?name=${user.username}&background=random`}
@@ -83,7 +93,7 @@ const EditProfileModal = ({ user, onClose }) => {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="absolute bottom-0 right-0 bg-primary-500 text-white p-2 rounded-full hover:bg-primary-600"
+                className="absolute bottom-0 right-0 save-button text-white p-2 rounded-full hover:bg-primary-700"
               >
                 <FaCamera />
               </button>

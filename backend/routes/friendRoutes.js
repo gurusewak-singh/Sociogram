@@ -16,4 +16,6 @@ router.get('/friends', verifyToken, friendController.getFriendList)
 
 router.delete('/friend-request/:id/cancel', verifyToken, friendController.cancelFriendRequest);
 
+router.delete('/:id/remove', verifyToken, friendController.removeFriend);
+
 module.exports = router;

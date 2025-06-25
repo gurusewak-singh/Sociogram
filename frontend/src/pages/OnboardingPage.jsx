@@ -1,3 +1,4 @@
+//frontend/src/pages/OnboardingPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useAppSelector, useAppDispatch } from '../hooks/reduxHooks';
@@ -110,7 +111,7 @@ const OnboardingPage = () => {
                         <button 
                             onClick={() => setStep(2)} 
                             disabled={!usernameStatus?.available || username.length < 3} 
-                            className="w-full mt-4 p-3 bg-primary-600 text-white rounded font-semibold disabled:bg-primary-300"
+                            className="w-full mt-4 p-3 save-button text-white rounded font-semibold disabled:bg-primary-300"
                         >
                             Next
                         </button>
@@ -125,7 +126,7 @@ const OnboardingPage = () => {
                         <div className="flex justify-center mb-6">
                             <div className="relative">
                                 <img src={previewImage || `https://ui-avatars.com/api/?name=${username || user?.username}&background=random`} alt="Profile Preview" className="w-28 h-28 rounded-full object-cover border-4 border-neutral-200"/>
-                                <button type="button" onClick={() => fileInputRef.current?.click()} className="absolute bottom-1 right-1 bg-primary-600 text-white p-2 rounded-full hover:bg-primary-700 transition-transform hover:scale-110">
+                                <button type="button" onClick={() => fileInputRef.current?.click()} className="absolute bottom-1 right-1 save-button text-white p-2 rounded-full hover:bg-primary-700 transition-transform hover:scale-110">
                                     <FaCamera />
                                 </button>
                                 <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*"/>
@@ -139,7 +140,7 @@ const OnboardingPage = () => {
                             <button onClick={handleFinish} className="px-4 py-2 text-neutral-600 font-semibold rounded-md hover:bg-neutral-100">
                                 Skip
                             </button>
-                            <button onClick={handleFinish} disabled={isLoading} className="px-6 py-3 bg-primary-600 text-white rounded-md font-semibold disabled:bg-primary-300">
+                            <button onClick={handleFinish} disabled={isLoading} className="px-6 py-3 save-button text-white rounded-md font-semibold disabled:bg-primary-300">
                                 {isLoading ? 'Saving...' : 'Finish & Enter'}
                             </button>
                         </div>

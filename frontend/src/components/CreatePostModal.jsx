@@ -1,3 +1,4 @@
+// frontend/src/components/CreatePostModal.jsx
 import React, { useState, useRef } from 'react';
 import api from '../services/api';
 import { useAppSelector } from '../hooks/reduxHooks';

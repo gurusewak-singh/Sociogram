@@ -1,3 +1,4 @@
+//frontend/src/store/postSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {

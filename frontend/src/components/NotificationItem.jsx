@@ -1,3 +1,4 @@
+//frontend/src/components/NotificationItem.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';

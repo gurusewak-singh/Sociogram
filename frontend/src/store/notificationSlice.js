@@ -1,3 +1,4 @@
+//frontend/src/store/notificationSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {

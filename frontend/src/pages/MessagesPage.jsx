@@ -1,3 +1,4 @@
+//frontend/src/pages/MessagesPage.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import MainLayout from '../layouts/MainLayout';
@@ -68,7 +69,7 @@ const MessagesPage = () => {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map(msg => (
             <div key={msg._id} className={`flex ${msg.senderId === currentUser?._id ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-xs md:max-w-md p-3 rounded-lg ${msg.senderId === currentUser?._id ? 'bg-primary-500 text-white' : 'bg-neutral-200 text-neutral-800'}`}>
+              <div className={`max-w-xs md:max-w-md p-3 rounded-lg ${msg.senderId === currentUser?._id ? 'save-button text-white' : 'bg-neutral-200 text-neutral-800'}`}>
                 <p>{msg.message}</p>
               </div>
             </div>
@@ -84,7 +85,7 @@ const MessagesPage = () => {
               placeholder="Type a message..."
               className="flex-1 px-4 py-2 bg-neutral-100 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-            <button type="submit" className="bg-primary-600 text-white p-3 rounded-full hover:bg-primary-700">
+            <button type="submit" className="save-button text-white p-3 rounded-full hover:bg-primary-700">
               <FaPaperPlane />
             </button>
           </form>

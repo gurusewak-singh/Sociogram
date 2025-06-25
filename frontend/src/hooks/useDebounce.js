@@ -1,3 +1,4 @@
+//frontend/src/hooks/useDebounce.js
 import { useState, useEffect } from 'react';
 
 // T is a generic type for the value being debounced

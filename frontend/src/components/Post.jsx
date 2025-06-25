@@ -1,3 +1,4 @@
+//frontend/src/components/Post.jsx
 import React, { useState } from 'react';
 import { FaHeart, FaComment, FaShare } from 'react-icons/fa';
 import { FiMoreHorizontal } from 'react-icons/fi';

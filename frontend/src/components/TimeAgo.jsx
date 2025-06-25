@@ -1,3 +1,4 @@
+//frontend/src/components/TimeAgo.jsx
 import React, { useEffect, useState } from 'react';
 import { format } from 'timeago.js';
 

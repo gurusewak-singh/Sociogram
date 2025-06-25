@@ -1,3 +1,4 @@
+//frontend/src/pages/NotificationsPage.jsx
 import React, { useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import NotificationItem from '../components/NotificationItem';

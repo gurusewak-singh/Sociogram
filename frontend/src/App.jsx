@@ -1,8 +1,10 @@
+//frontend/src/App.jsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from './components/ProtectedRoute';
 import OnboardingGuard from './components/OnboardingGuard';
 import OnboardingPage from './pages/OnboardingPage';
 import ProfilePage from './pages/ProfilePage';
+import FriendListPage from './pages/FriendListPage'; // <-- Import the new page
 import AuthLayout from './layouts/AuthLayout';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -42,6 +44,8 @@ function App() {
           <Route element={<OnboardingGuard />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/profile/:id" element={<ProfilePage />} />
+            {/* --- ADDED THE NEW ROUTE --- */}
+            <Route path="/profile/:id/friends" element={<FriendListPage />} />
             <Route path="/messages" element={<MessagesHubPage />} />
             <Route path="/messages/:id" element={<MessagesPage />} />
             <Route path="/explore" element={<ExplorePage />} />
